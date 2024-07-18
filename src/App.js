@@ -1,97 +1,95 @@
 // Import dependencies
 import React, { useRef, useState, useEffect } from "react";
 import * as tf from "@tensorflow/tfjs";
-// 1. TODO - Import required model here
-// e.g. import * as tfmodel from "@tensorflow-models/tfmodel";
+import * as cocossd from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
 import "./App.css";
-// 2. TODO - Import drawing utility here
-// e.g. import { drawRect } from "./utilities";
+import { drawRect } from "./utilities"; // Assuming you have a drawRect utility
 
 function App() {
-  const webcamRef = useRef(null);
-  const canvasRef = useRef(null);
+	const webcamRef = useRef(null);
+	const canvasRef = useRef(null);
 
-  // Main function
-  const runCoco = async () => {
-    // 3. TODO - Load network 
-    // e.g. const net = await cocossd.load();
-    
-    //  Loop and detect hands
-    setInterval(() => {
-      detect(net);
-    }, 10);
-  };
+	// Main function
+	const runCoco = async () => {
+		// Load the COCO-SSD model
+		const net = await cocossd.load();
 
-  const detect = async (net) => {
-    // Check data is available
-    if (
-      typeof webcamRef.current !== "undefined" &&
-      webcamRef.current !== null &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      // Get Video Properties
-      const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
+		// Loop and detect objects
+		setInterval(() => {
+			detect(net);
+		}, 10);
+	};
 
-      // Set video width
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
+	const detect = async (net) => {
+		// Check data is available
+		if (
+			typeof webcamRef.current !== "undefined" &&
+			webcamRef.current !== null &&
+			webcamRef.current.video.readyState === 4
+		) {
+			// Get Video Properties
+			const video = webcamRef.current.video;
+			const videoWidth = video.videoWidth;
+			const videoHeight = video.videoHeight;
 
-      // Set canvas height and width
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
+			// Set video width and height
+			webcamRef.current.video.width = videoWidth;
+			webcamRef.current.video.height = videoHeight;
 
-      // 4. TODO - Make Detections
-      // e.g. const obj = await net.detect(video);
+			// Set canvas height and width
+			canvasRef.current.width = videoWidth;
+			canvasRef.current.height = videoHeight;
 
-      // Draw mesh
-      const ctx = canvasRef.current.getContext("2d");
+			// Make Detections
+			const obj = await net.detect(video);
 
-      // 5. TODO - Update drawing utility
-      // drawSomething(obj, ctx)  
-    }
-  };
+			// Draw mesh
+			const ctx = canvasRef.current.getContext("2d");
+			drawRect(obj, ctx);
+		}
+	};
 
-  useEffect(()=>{runCoco()},[]);
+	useEffect(() => {
+		runCoco();
+	}, []);
 
-  return (
-    <div className="App">
-      <header className="App-header">
-        <Webcam
-          ref={webcamRef}
-          muted={true} 
-          style={{
-            position: "absolute",
-            marginLeft: "auto",
-            marginRight: "auto",
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            zindex: 9,
-            width: 640,
-            height: 480,
-          }}
-        />
+	return (
+		<div className="App">
+			<header className="App-header">
+				<Webcam
+					ref={webcamRef}
+					muted={true}
+					style={{
+						position: "absolute",
+						marginLeft: "auto",
+						marginRight: "auto",
+						left: 0,
+						right: 0,
+						textAlign: "center",
+						zIndex: 9,
+						width: 640,
+						height: 480,
+					}}
+				/>
 
-        <canvas
-          ref={canvasRef}
-          style={{
-            position: "absolute",
-            marginLeft: "auto",
-            marginRight: "auto",
-            left: 0,
-            right: 0,
-            textAlign: "center",
-            zindex: 8,
-            width: 640,
-            height: 480,
-          }}
-        />
-      </header>
-    </div>
-  );
+				<canvas
+					ref={canvasRef}
+					style={{
+						position: "absolute",
+						marginLeft: "auto",
+						marginRight: "auto",
+						left: 0,
+						right: 0,
+						textAlign: "center",
+						zIndex: 8,
+						width: 640,
+						height: 480,
+					}}
+				/>
+			</header>
+		</div>
+	);
 }
 
 export default App;
