@@ -8,24 +8,28 @@ import "./App.css";
 
 function App() {
 	const drawRect = (detections, ctx) => {
+		// Clear previous drawings
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+		// Loop through each prediction
 		detections.forEach((prediction) => {
-			// Get prediction results
+			// Get the bounding box and class
 			const [x, y, width, height] = prediction["bbox"];
 			const text = prediction["class"];
 
 			// Set styling
 			ctx.strokeStyle = "green";
+			ctx.lineWidth = 2;
 			ctx.font = "18px Arial";
+			ctx.fillStyle = "green";
 
 			// Draw rectangles and text
 			ctx.beginPath();
-			ctx.fillStyle = "green";
-			ctx.fillText(text, x, y);
+			ctx.fillText(text, x, y > 10 ? y - 5 : y + 15);
 			ctx.rect(x, y, width, height);
 			ctx.stroke();
 		});
 	};
-
 	const webcamRef = useRef(null);
 	const canvasRef = useRef(null);
 
@@ -36,12 +40,12 @@ function App() {
 
 		// Loop and detect objects
 		setInterval(() => {
+			console.log("running");
 			detect(net);
 		}, 10);
 	};
 
 	const detect = async (net) => {
-		// Check data is available
 		if (
 			typeof webcamRef.current !== "undefined" &&
 			webcamRef.current !== null &&
@@ -56,13 +60,13 @@ function App() {
 			webcamRef.current.video.width = videoWidth;
 			webcamRef.current.video.height = videoHeight;
 
-			// Set canvas height and width
+			// Set canvas width and height
 			canvasRef.current.width = videoWidth;
 			canvasRef.current.height = videoHeight;
 
 			// Make Detections
 			const obj = await net.detect(video);
-
+			console.log(obj); // Log detections to console
 			// Draw mesh
 			const ctx = canvasRef.current.getContext("2d");
 			drawRect(obj, ctx);
