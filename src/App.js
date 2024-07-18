@@ -1,6 +1,7 @@
 // Import dependencies
 import React, { useRef, useState, useEffect } from "react";
 import * as tf from "@tensorflow/tfjs";
+import * as cocossd from "@tensorflow-models/coco-ssd";
 // 1. TODO - Import required model here
 // e.g. import * as tfmodel from "@tensorflow-models/tfmodel";
 import Webcam from "react-webcam";
@@ -15,7 +16,7 @@ function App() {
   // Main function
   const runCoco = async () => {
     // 3. TODO - Load network 
-    // e.g. const net = await cocossd.load();
+     const net = await cocossd.load();
     
     //  Loop and detect hands
     setInterval(() => {
