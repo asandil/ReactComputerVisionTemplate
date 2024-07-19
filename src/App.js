@@ -16,12 +16,12 @@ function App() {
 		console.log("Handpose model loaded.");
 		//  Loop and detect hands
 		setInterval(() => {
+			console.log("running");
 			detect(net);
 		}, 10);
 	};
 
 	const detect = async (net) => {
-		// Check data is available
 		if (
 			typeof webcamRef.current !== "undefined" &&
 			webcamRef.current !== null &&
@@ -36,13 +36,13 @@ function App() {
 			webcamRef.current.video.width = videoWidth;
 			webcamRef.current.video.height = videoHeight;
 
-			// Set canvas height and width
+			// Set canvas width and height
 			canvasRef.current.width = videoWidth;
 			canvasRef.current.height = videoHeight;
 
 			// Make Detections
 			const obj = await net.detect(video);
-
+			console.log(obj); // Log detections to console
 			// Draw mesh
 			const ctx = canvasRef.current.getContext("2d");
 			drawRect(obj, ctx);
