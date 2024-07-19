@@ -4,37 +4,17 @@ import * as tf from "@tensorflow/tfjs";
 import * as cocossd from "@tensorflow-models/coco-ssd";
 import Webcam from "react-webcam";
 import "./App.css";
-//import { drawRect } from "./utilities"; // Assuming you have a drawRect utility
+import { drawRect } from "./utilities";
 
 function App() {
-	const drawRect = (detections, ctx) => {
-		detections.forEach((prediction) => {
-			// Get prediction results
-			const [x, y, width, height] = prediction["bbox"];
-			const text = prediction["class"];
-
-			// Set styling
-			ctx.strokeStyle = "green";
-			ctx.font = "18px Arial";
-
-			// Draw rectangles and text
-			ctx.beginPath();
-			ctx.fillStyle = "green";
-			ctx.fillText(text, x, y);
-			ctx.rect(x, y, width, height);
-			ctx.stroke();
-		});
-	};
-
 	const webcamRef = useRef(null);
 	const canvasRef = useRef(null);
 
 	// Main function
 	const runCoco = async () => {
-		// Load the COCO-SSD model
 		const net = await cocossd.load();
-
-		// Loop and detect objects
+		console.log("Handpose model loaded.");
+		//  Loop and detect hands
 		setInterval(() => {
 			detect(net);
 		}, 10);
@@ -49,10 +29,10 @@ function App() {
 		) {
 			// Get Video Properties
 			const video = webcamRef.current.video;
-			const videoWidth = video.videoWidth;
-			const videoHeight = video.videoHeight;
+			const videoWidth = webcamRef.current.video.videoWidth;
+			const videoHeight = webcamRef.current.video.videoHeight;
 
-			// Set video width and height
+			// Set video width
 			webcamRef.current.video.width = videoWidth;
 			webcamRef.current.video.height = videoHeight;
 
@@ -86,7 +66,7 @@ function App() {
 						left: 0,
 						right: 0,
 						textAlign: "center",
-						zIndex: 9,
+						zindex: 9,
 						width: 640,
 						height: 480,
 					}}
@@ -101,7 +81,7 @@ function App() {
 						left: 0,
 						right: 0,
 						textAlign: "center",
-						zIndex: 8,
+						zindex: 8,
 						width: 640,
 						height: 480,
 					}}
